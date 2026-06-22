@@ -1,6 +1,4 @@
-
-
-// put function declarations here:
+String userInput = "";
 void setup()
 {
   // put your setup code here, to run once:
@@ -14,19 +12,27 @@ void loop()
 
   /* Enter on Wokwi is 10 while Enter on VS Code is 13
   Moreover VS code doesn't even need ENTER to send data
-   from terminal to the ESP32, As soon as yoou press the key on VS Code
+   from terminal to the ESP32, As soon as you press the key on VS Code
   It is automatically sent to the ESP32*/
   int countInBuffer = Serial.available();
-  String userInput = "";
+  
   if (countInBuffer > 0)
   {
     for (int i = 0; i < countInBuffer; i++)
     {
       char currentCharacter = Serial.read();
-      userInput += currentCharacter;
+      if(currentCharacter != '\r'){
+        userInput += currentCharacter;
+      }
+      else{
+        Serial.println("Command Executed " + userInput);
+        userInput="";
+      }
     }
   }
-  Serial.println(userInput);
+   
 
-  delay(3000); // this speeds up the simulation
+  
+
+  // delay(5000); // this speeds up the simulation // Not needed after we use the Carriage return Condition
 }
