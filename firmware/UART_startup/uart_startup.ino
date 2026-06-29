@@ -25,7 +25,18 @@ void loop()
         userInput += currentCharacter;
       }
       else{
-        Serial.println("Command Executed " + userInput);
+        if (userInput=="help")
+        {
+          Serial.println("Available Commands: ");
+          Serial.println("Help");
+          Serial.print("Version");
+        }
+        else if(userInput=="version"){
+          Serial.println("1.0.0");
+        }
+        else{
+          Serial.println("Unknown Command");
+        }
         userInput="";
       }
     }
