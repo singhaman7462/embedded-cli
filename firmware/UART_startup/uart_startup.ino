@@ -21,15 +21,15 @@ void loop()
     for (int i = 0; i < countInBuffer; i++)
     {
       char currentCharacter = Serial.read();
-      if(currentCharacter != '\r'){
+      if(currentCharacter != '\r' && currentCharacter != '\n'){
         userInput += currentCharacter;
       }
       else{
         if (userInput=="help")
         {
           Serial.println("Available Commands: ");
-          Serial.println("Help");
-          Serial.print("Version");
+          Serial.println("help");
+          Serial.print("version");
         }
         else if(userInput=="version"){
           Serial.println("1.0.0");
