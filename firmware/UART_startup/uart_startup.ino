@@ -1,4 +1,9 @@
+// put function declarations here:
+void processCommand(String);
+
+//Global Variables
 String userInput = "";
+
 void setup()
 {
   // put your setup code here, to run once:
@@ -15,35 +20,41 @@ void loop()
    from terminal to the ESP32, As soon as you press the key on VS Code
   It is automatically sent to the ESP32*/
   int countInBuffer = Serial.available();
-  
+
   if (countInBuffer > 0)
   {
     for (int i = 0; i < countInBuffer; i++)
     {
       char currentCharacter = Serial.read();
-      if(currentCharacter != '\r' && currentCharacter != '\n'){
+      if (currentCharacter != '\r' && currentCharacter != '\n')
+      {
         userInput += currentCharacter;
       }
-      else{
-        if (userInput=="help")
-        {
-          Serial.println("Available Commands: ");
-          Serial.println("help");
-          Serial.print("version");
-        }
-        else if(userInput=="version"){
-          Serial.println("1.0.0");
-        }
-        else{
-          Serial.println("Unknown Command");
-        }
-        userInput="";
+      else
+      {
+        processCommand(userInput);
+        userInput = "";
       }
     }
   }
-   
-
-  
 
   // delay(5000); // this speeds up the simulation // Not needed after we use the Carriage return Condition
+}
+
+void processCommand(String command)
+{
+  if (command == "help")
+  {
+    Serial.println("Available Commands: ");
+    Serial.println("help");
+    Serial.println("version");
+  }
+  else if (command == "version")
+  {
+    Serial.println("1.0.0");
+  }
+  else
+  {
+    Serial.println("Unknown Command");
+  }
 }
