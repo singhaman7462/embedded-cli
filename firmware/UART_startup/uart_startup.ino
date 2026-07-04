@@ -8,7 +8,9 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  Serial.println("UART Initialized successfully");
+  Serial.println("Embedded CLI v1.0");
+  Serial.println("Type 'help' to see available commands.");
+  Serial.print("CLI> ");
 }
 
 void loop()
@@ -29,11 +31,15 @@ void loop()
       if (currentCharacter != '\r' && currentCharacter != '\n')
       {
         userInput += currentCharacter;
+        Serial.print(currentCharacter);  //  handling the echo of each character
       }
       else
       {
+        Serial.println();  //To print the result from a new line
         processCommand(userInput);
         userInput = "";
+        Serial.print("\nCLI> ");  // Showing the CLI prompt
+        
       }
     }
   }
@@ -43,6 +49,7 @@ void loop()
 
 void processCommand(String command)
 {
+  
   if (command == "help")
   {
     Serial.println("Available Commands: ");
