@@ -1,10 +1,11 @@
-
 // put function declarations here:
 void processCommand(String);
+void handleBufferOverflow();
 
-//Global Variables
+// Global Variables
 String userInput = "";
 const char BACKSPACE_KEY = 127;
+const size_t MAX_COMMAND_LENGTH = 64;
 
 void setup()
 {
@@ -19,7 +20,7 @@ void loop()
 {
   // put your main code here, to run repeatedly:
 
-  /* 
+  /*
   Enter on Wokwi is 10 while Enter on VS Code is 13. Backspace on VS Code is 127
   Moreover VS code doesn't even need ENTER to send data
    from terminal to the ESP32, As soon as you press the key on VS Code
@@ -34,30 +35,39 @@ void loop()
       char currentCharacter = Serial.read();
       if (currentCharacter != '\r' && currentCharacter != '\n')
       {
-        if(currentCharacter == BACKSPACE_KEY  ){
-          if(!userInput.isEmpty()){
-           int lastIndex = userInput.length()-1 ;
-           // Buffer Handling for the Backspace
-           userInput.remove(lastIndex);    
+        if (currentCharacter == BACKSPACE_KEY)
+        {
+          if (!userInput.isEmpty())
+          {
+            int lastIndex = userInput.length() - 1;
+            // Buffer Handling for the Backspace
+            userInput.remove(lastIndex);
             // Echo Handling for the Backspace
-           Serial.print('\b');  
-           Serial.print(' ');  
-           Serial.print('\b'); 
-          }             
-        
-        }else{
-           userInput += currentCharacter;
-           Serial.print(currentCharacter);  //  handling the echo of each character
+            Serial.print('\b');
+            Serial.print(' ');
+            Serial.print('\b');
+          }
         }
-         
+        else
+        {
+          if (userInput.length() == MAX_COMMAND_LENGTH)
+          {
+            handleBufferOverflow();
+            userInput="";
+          }
+          else
+          {
+            userInput += currentCharacter;
+            Serial.print(currentCharacter); //  handling the echo of each character
+          }
+        }
       }
       else
       {
-        Serial.println();  //To print the result from a new line
+        Serial.println(); // To print the result from a new line
         processCommand(userInput);
         userInput = "";
-        Serial.print("\nCLI> ");  // Showing the CLI prompt
-        
+        Serial.print("\nCLI> ");
       }
     }
   }
@@ -67,7 +77,11 @@ void loop()
 
 void processCommand(String command)
 {
-   Serial.println(command) ;  // To check the command sent : just for debugging : will comment later
+  // Serial.println(command.length()); // To check the command sent : just for debugging : will comment later
+  if (command.isEmpty()) // Handling the Empty commands
+  {
+    return;
+  }
   if (command == "help")
   {
     Serial.println("Available Commands: ");
@@ -82,4 +96,11 @@ void processCommand(String command)
   {
     Serial.println("Unknown Command");
   }
+}
+
+void handleBufferOverflow()
+{
+  Serial.println();
+  Serial.println("Error : Maximum command length exceeded");
+  Serial.print("\nCLI> ");
 }
