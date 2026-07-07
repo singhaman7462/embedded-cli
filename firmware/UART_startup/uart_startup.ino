@@ -1,11 +1,15 @@
 // put function declarations here:
-void processCommand(String);
+void processCommand(String tokens[]);
 void handleBufferOverflow();
+void tokenize(String);
 
 // Global Variables
 String userInput = "";
 const char BACKSPACE_KEY = 127;
 const size_t MAX_COMMAND_LENGTH = 64;
+const size_t MAX_TOKENS=10;
+String tokens[MAX_TOKENS];
+size_t tokenCount=0;
 
 void setup()
 {
@@ -65,7 +69,8 @@ void loop()
       else
       {
         Serial.println(); // To print the result from a new line
-        processCommand(userInput);
+        tokenize(userInput);
+        processCommand(tokens);
         userInput = "";
         Serial.print("\nCLI> ");
       }
@@ -75,9 +80,36 @@ void loop()
   // delay(5000); // this speeds up the simulation // Not needed after we use the Carriage return Condition
 }
 
-void processCommand(String command)
+
+
+void tokenize(String command){
+      tokenCount=0;
+      String currentString="";
+      for(int i=0;i<command.length();i++){
+        char currentCharacter=command[i];
+        if(currentCharacter!=' '){
+             currentString+=currentCharacter;
+        }
+        else{
+            tokens[tokenCount++]=currentString;
+            currentString="";
+        }
+      }
+      tokens[tokenCount]=currentString;  // Entering the last string to tokens
+
+      //Checking all the tokens for Debugging
+      // for(int i=0;i<=tokenCount;i++){
+      //   Serial.println(tokens[i]);
+      // } 
+
+      //Checking to know what happens when an empty command is given
+      // Serial.println(tokenCount+1);
+      // Serial.println(tokens[0].length());
+}
+
+void processCommand(String tokens[])
 {
-  // Serial.println(command.length()); // To check the command sent : just for debugging : will comment later
+  String command=tokens[0];
   if (command.isEmpty()) // Handling the Empty commands
   {
     return;
@@ -104,3 +136,5 @@ void handleBufferOverflow()
   Serial.println("Error : Maximum command length exceeded");
   Serial.print("\nCLI> ");
 }
+
+
